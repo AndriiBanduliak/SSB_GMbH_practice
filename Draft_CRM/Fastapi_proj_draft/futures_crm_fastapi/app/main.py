@@ -12,8 +12,11 @@ templates = Jinja2Templates(directory="app/templates")
 app.state.templates = templates
 
 # Регистрация фильтра escapejs для Jinja2 (аналог Django)
+
+
 def escapejs(value):
     return value.replace("'", "\\'").replace('"', '\\"').replace("\n", "\\n")
+
 
 templates.env.filters["escapejs"] = escapejs
 
