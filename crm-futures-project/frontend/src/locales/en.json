@@ -1,0 +1,19 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard Overview"
+  },
+  "settings": {
+    "title": "User Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "save": "Save Settings",
+    "success": "Settings saved successfully!",
+    "error": "Failed to save settings."
+  }
+}

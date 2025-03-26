@@ -1,0 +1,19 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "settings": "Einstellungen"
+  },
+  "dashboard": {
+    "title": "Dashboard-Übersicht"
+  },
+  "settings": {
+    "title": "Benutzereinstellungen",
+    "language": "Sprache",
+    "theme": "Thema",
+    "light": "Hell",
+    "dark": "Dunkel",
+    "save": "Einstellungen speichern",
+    "success": "Einstellungen erfolgreich gespeichert!",
+    "error": "Einstellungen konnten nicht gespeichert werden."
+  }
+}

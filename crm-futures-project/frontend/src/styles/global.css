@@ -1,0 +1,103 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Светлая тема */
+body.light {
+  background-color: #ffffff;
+  color: #333333;
+}
+
+body.light nav {
+  background-color: #f0f0f0;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+}
+body.light nav a {
+  color: #007bff;
+  text-decoration: none;
+  margin-right: 15px;
+}
+body.light nav a:hover {
+  text-decoration: underline;
+}
+body.light button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+body.light button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+body.light input, body.light select {
+  padding: 5px;
+  margin-left: 5px;
+}
+
+/* Темная тема */
+body.dark {
+  background-color: #22272e;
+  color: #c9d1d9;
+}
+
+body.dark nav {
+  background-color: #1c2128;
+  padding: 10px;
+  border-bottom: 1px solid #444c56;
+}
+body.dark nav a {
+  color: #58a6ff;
+  text-decoration: none;
+  margin-right: 15px;
+}
+body.dark nav a:hover {
+  text-decoration: underline;
+}
+body.dark button {
+  background-color: #377ef0;
+  color: white;
+  border: none;
+  padding: 8px 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+body.dark button:disabled {
+  background-color: #555;
+  color: #aaa;
+  cursor: not-allowed;
+}
+body.dark input, body.dark select {
+  background-color: #1c2128;
+  color: #c9d1d9;
+  border: 1px solid #444c56;
+  padding: 5px;
+  margin-left: 5px;
+}
+body.dark label {
+  margin-right: 10px;
+}
+
+/* Общий контейнер */
+.app-container {
+  min-height: 100vh;
+}
+
+main {
+  padding: 20px;
+}
+
+nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+nav li {
+  display: inline-block;
+}

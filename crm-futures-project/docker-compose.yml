@@ -1,0 +1,55 @@
+#version: '3.8'
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5001:5000" # Хост:Контейнер
+    volumes:
+      - ./backend:/app # Для разработки, чтобы изменения кода подхватывались
+    env_file:
+      - .env
+    environment:
+      - FLASK_APP=${FLASK_APP}
+      - FLASK_RUN_HOST=${FLASK_RUN_HOST}
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - DATABASE_URL=${DATABASE_URL}
+      - SECRET_KEY=${SECRET_KEY}
+    depends_on:
+      - db
+    networks:
+      - crm_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" # Хост:Контейнер (Nginx)
+    depends_on:
+      - backend
+    networks:
+      - crm_network
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password # Для совместимости со старыми драйверами
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db_init:/docker-entrypoint-initdb.d # Запуск init.sql при первом старте
+    ports:
+      - "3307:3306" # Опционально: для прямого доступа к БД с хоста
+    networks:
+      - crm_network
+
+volumes:
+  mysql_data:
+
+networks:
+  crm_network:
+    driver: bridge
