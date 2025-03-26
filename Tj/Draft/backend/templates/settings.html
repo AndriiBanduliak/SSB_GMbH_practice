@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}{{ t.settings }}{% endblock %}
+{% block content %}
+<h2 class="text-center mb-4">{{ t.settings }}</h2>
+
+<div class="row">
+  <!-- Раздел для обновления личных данных -->
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header">{{ t.personal_data }}</div>
+      <div class="card-body">
+        <form action="/update_settings?lang={{ lang }}&token={{ token }}" method="post">
+          <div class="form-group">
+            <label>Email:</label>
+            <input type="email" class="form-control" name="email" value="{{ user.email or '' }}" required>
+          </div>
+          <div class="form-group">
+            <label>Phone:</label>
+            <input type="text" class="form-control" name="phone" value="{{ user.phone or '' }}" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">{{ t.save_settings }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Раздел для добавления API данных по бирже -->
+  <div class="col-md-6">
+    <div class="card mb-4">
+      <div class="card-header">{{ t.api_settings }}</div>
+      <div class="card-body">
+        <form action="/add_api_key?lang={{ lang }}" method="post">
+          <!-- Скрытое поле для токена -->
+          <input type="hidden" name="token" value="{{ token }}">
+
+          <div class="form-group">
+            <label>{{ t.select_exchange }}:</label>
+            <select name="exchange" id="exchange" class="form-control" required onchange="showApiFields(this.value)">
+              <option value="">-- {{ t.select_exchange }} --</option>
+              <option value="binance">Binance</option>
+              <option value="kraken">Kraken</option>
+              <option value="cbpro">CBPro</option>
+              <option value="bitget">Bitget</option>
+              <option value="mexc">Mexc</option>
+              <option value="kucoin">Kucoin</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>{{ t.api_key }}:</label>
+            <input type="text" class="form-control" name="api_key" required>
+          </div>
+          <div class="form-group">
+            <label>{{ t.secret_key }}:</label>
+            <input type="text" class="form-control" name="secret_key" required>
+          </div>
+          <div class="form-group" id="passphraseField" style="display: none;">
+            <label>{{ t.passphrase }}:</label>
+            <input type="text" class="form-control" name="passphrase">
+          </div>
+          <button type="submit" class="btn btn-success btn-block">{{ t.save_api_data }}</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showApiFields(exchange) {
+  var passField = document.getElementById("passphraseField");
+  // Если выбрана биржа, которая требует дополнительного ввода passphrase (например, CBPro или Bitget)
+  if (exchange === "cbpro" || exchange === "bitget") {
+    passField.style.display = "block";
+    // Если выбрана именно CBPro, сделаем поле обязательным
+    if (exchange === "cbpro") {
+      passField.querySelector('input[name="passphrase"]').setAttribute("required", "required");
+    } else {
+      passField.querySelector('input[name="passphrase"]').removeAttribute("required");
+    }
+  } else {
+    passField.style.display = "none";
+    passField.querySelector('input[name="passphrase"]').removeAttribute("required");
+  }
+}
+</script>
+{% endblock %}

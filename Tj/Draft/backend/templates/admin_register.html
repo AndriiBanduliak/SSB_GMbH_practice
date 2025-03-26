@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Admin - Create User{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-6">
+    <h2 class="mt-4">Admin - Create User</h2>
+    <form action="/admin/create_user" method="post">
+      <div class="form-group">
+        <label>{{ t.username }}:</label>
+        <input type="text" class="form-control" name="username" required>
+      </div>
+      <div class="form-group">
+        <label>{{ t.password }}:</label>
+        <input type="password" class="form-control" name="password" required>
+      </div>
+      <div class="form-group">
+        <label>Token:</label>
+        <input type="text" class="form-control" name="token" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Create User</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    command: ./venv/bin/gunicorn futures_crm.wsgi:application --bind 0.0.0.0:8000
+
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"

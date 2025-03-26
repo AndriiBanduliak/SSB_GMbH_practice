@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block title %}{{ t.dashboard }}{% endblock %}
+{% block content %}
+
+<h2 class="text-center mb-4">{{ t.dashboard }}</h2>
+
+<!-- Первый ряд (3 блока) -->
+<div class="row">
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ t.capital_overview }}</h5>
+        <p class="card-text fs-5">{{ metrics.capital_overview }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ t.total_trades }}</h5>
+        <p class="card-text fs-5">{{ metrics.total_trades }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ t.current_balance }}</h5>
+        <p class="card-text fs-5">{{ metrics.current_balance }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Второй ряд (3 блока) -->
+<div class="row">
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <!-- Например, убытки выделяем красным заголовком -->
+        <h5 class="card-title text-danger">{{ t.total_losses }}</h5>
+        <p class="card-text fs-5">{{ metrics.total_losses }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <!-- Прибыль выделяем зелёным заголовком -->
+        <h5 class="card-title text-success">{{ t.total_wins }}</h5>
+        <p class="card-text fs-5">{{ metrics.total_wins }}</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4 mb-3">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title text-primary">{{ t.diagram_capital }}</h5>
+        <p class="card-text">[Diagram placeholder]</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Таблица сделок -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-header bg-light">
+    <h5 class="mb-0">{{ t.trade_history }}</h5>
+  </div>
+  <div class="card-body">
+    <table class="table table-striped">
+      <thead class="table-dark">
+        <tr>
+          <th>{{ t.date }}</th>
+          <th>{{ t.currency_pair }}</th>
+          <th>{{ t.win_loss }}</th>
+          <th>{{ t.current_capital }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for trade in trades %}
+        <tr>
+          <td>{{ trade.Date }}</td>
+          <td>{{ trade.Currency_pair }}</td>
+          <td>{{ trade.WIN_LOSS }}</td>
+          <td>{{ trade.Current_capital }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Автоматические сделки из API -->
+<div class="card mb-4 shadow-sm">
+  <div class="card-body">
+    <h5 class="card-title">{{ t.auto_trades }}</h5>
+    <p>[здесь можно вывести автоматическую выгрузку сделок из биржи]</p>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,13 @@
+{
+  "name": "futures_crm",
+  "version": "1.0.0",
+  "scripts": {
+    "build-css": "node_modules/.bin/tailwindcss -i ./trading_app/static/css/tailwind.css -o ./trading_app/static/css/output.css",
+    "dev-css": "node_modules/.bin/tailwindcss -i ./trading_app/static/css/tailwind.css -o ./trading_app/static/css/output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^4.0.15",
+    "postcss": "^8.5.3",
+    "autoprefixer": "^10.4.21"
+  }
+}

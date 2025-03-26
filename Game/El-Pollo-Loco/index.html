@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Pollo Loco</title>
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    @font-face {
+      font-family: 'retro';
+      src: url('./fonts/retroGaming.ttf') format('truetype');
+    }
+    /* Стили для экранов победы и поражения */
+    .screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(0,0,0,0.9), rgba(30,30,30,0.9));
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      z-index: 100;
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+    }
+    @keyframes fadeIn {
+      to { opacity: 1; }
+    }
+    .screen button {
+      font-size: 20px;
+      padding: 10px 20px;
+      margin-top: 20px;
+      cursor: pointer;
+      background-color: #ffcc00;
+      border: none;
+      font-family: 'retro', sans-serif;
+      transition: background-color 0.3s;
+    }
+    .screen button:hover {
+      background-color: #ffdd33;
+    }
+    /* Стили для регулятора громкости */
+    #volumeControl {
+      margin: 20px;
+      text-align: center;
+    }
+    #volumeControl label {
+      font-size: 18px;
+      font-family: 'retro', sans-serif;
+      color: #fff;
+    }
+    /* Стили для таблицы лидеров - фиксированная, слева, по центру по вертикали */
+    #leaderboardContainer {
+      position: fixed;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      width: 300px;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 20px;
+      border-radius: 0 8px 8px 0;
+      color: #fff;
+      z-index: 100;
+      text-align: center;
+    }
+    #leaderboardContainer h2 {
+      font-family: 'retro', sans-serif;
+      font-size: 32px;
+      margin-bottom: 10px;
+    }
+    #leaderboardList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #leaderboardList li {
+      margin-bottom: 5px;
+      font-size: 18px;
+      font-family: 'retro', sans-serif;
+    }
+  </style>
+
+  <!-- Подключаем модуль для таблицы лидеров -->
+  <script src="./scoreManager.js"></script>
+  <!-- Остальные скрипты: порядок подключения важен -->
+  <script src="./models/drawable-object.class.js"></script>
+  <script src="./models/movable-object.class.js"></script>
+  <script src="./models/coin.class.js"></script>
+  <script src="./models/character.class.js"></script>
+  <script src="./models/chicken.class.js"></script>
+  <script src="./models/status-bar.class.js"></script>
+  <script src="./models/coins-bar.class.js"></script>
+  <script src="./models/clouds.class.js"></script>
+  <script src="./models/background-objects.class.js"></script>
+  <script src="./models/keyboard.class.js"></script>
+  <script src="./models/level.class.js"></script>
+  <script src="./models/endboss.class.js"></script>
+  <script src="./models/throwable-objects.class.js"></script>
+  <script src="./models/levels/level1.js"></script>
+  <script src="./models/world.class.js"></script>
+  <script src="./game.js"></script>
+  <script>
+    // Функция рестарта игры – перезагружает страницу
+    function restartGame() {
+      window.location.reload();
+    }
+
+    // Функция отображения таблицы лидеров
+    function showLeaderboard() {
+      const leaderboard = getLeaderboard();
+      const listElement = document.getElementById('leaderboardList');
+      listElement.innerHTML = "";
+      leaderboard.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.textContent = `${index + 1}. ${entry.name} — ${entry.score} очков`;
+        listElement.appendChild(li);
+      });
+    }
+
+    // При загрузке главного меню обновляем таблицу лидеров
+    window.addEventListener('load', () => {
+      showLeaderboard();
+    });
+  </script>
+</head>
+<body onload="init()">
+  <h1>El Pollo Loco</h1>
+  <canvas id="canvas" width="720px" height="480px"></canvas>
+
+  <!-- Регулятор громкости -->
+  <div id="volumeControl">
+    <label for="volumeSlider">VOLUME:</label>
+    <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
+  </div>
+
+  <!-- Таблица лидеров, расположенная слева по центру -->
+  <div id="leaderboardContainer">
+    <h2>TOP 20</h2>
+    <ul id="leaderboardList"></ul>
+  </div>
+
+  <!-- Экран победы -->
+  <div id="victoryScreen" class="screen" style="display:none;">
+    <h2>V I N N E R !</h2>
+    <button onclick="restartGame()">NEW GAME</button>
+  </div>
+
+  <!-- Экран поражения -->
+  <div id="gameOverScreen" class="screen" style="display:none;">
+    <h2>L O S E R ! Shame on YOU!!!</h2>
+    <button onclick="restartGame()">RESTART THE GAME</button>
+  </div>
+</body>
+</html>

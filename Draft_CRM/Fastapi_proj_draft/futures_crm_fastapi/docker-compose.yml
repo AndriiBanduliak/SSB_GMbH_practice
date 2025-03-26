@@ -1,0 +1,18 @@
+version: '3.8'
+services:
+  web:
+    build: .
+    command: ./venv/bin/python -m gunicorn -k uvicorn.workers.UvicornWorker app.main:app --bind 0.0.0.0:8000
+    volumes:
+      - .:/app
+      - venv_data:/app/venv
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+  redis:
+    image: redis:6-alpine
+    ports:
+      - "6379:6379"
+volumes:
+  venv_data:

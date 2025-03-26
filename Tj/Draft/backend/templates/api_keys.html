@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}{{ t.api_keys }}{% endblock %}
+{% block content %}
+<h2 class="mt-4">{{ t.api_keys }}</h2>
+<form action="/add_api_key" method="post">
+  <div class="form-group">
+    <label>Exchange:</label>
+    <select name="exchange" class="form-control">
+      <option value="binance">Binance</option>
+      <option value="kraken">Kraken</option>
+      <option value="cbpro">CBPro</option>
+      <option value="bitget">Bitget</option>
+      <option value="mexc">Mexc</option>
+      <option value="kucoin">Kucoin</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>API Key:</label>
+    <input type="text" class="form-control" name="api_key" required>
+  </div>
+  <div class="form-group">
+    <label>Secret Key:</label>
+    <input type="text" class="form-control" name="secret_key" required>
+  </div>
+  <div class="form-group">
+    <label>Your Token:</label>
+    <input type="text" class="form-control" name="token" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Save Key</button>
+</form>
+{% endblock %}

@@ -1,0 +1,40 @@
+body{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    background-image:url(./img/dessert.png) ;
+    background-position: center;
+    background-size: cover;
+    font-family: 'retro',Arial, Helvetica, sans-serif;
+    
+}
+
+canvas{
+    background-color: black;
+    display: block;
+}
+h1{
+    font-size: 70px;
+    letter-spacing: 3px;
+    text-shadow: 4px  4px  4px rgba( grey, grey,grey);
+}
+@media only screen and (max-height: 480px){
+    canvas {
+        height: 100vh;
+    }
+    h1{
+        font-size: 40px;
+        letter-spacing: 3px;
+        text-shadow: 4px  4px  4px rgba( grey, grey,grey);
+    }
+}
+@media only screen and (max-width: 720px){
+    canvas{
+        width: 100%;
+    }
+    h1{
+        font-size: 40px;
+        letter-spacing: 3px;
+        text-shadow: 4px  4px  4px rgba( grey, grey,grey);
+    }
+}

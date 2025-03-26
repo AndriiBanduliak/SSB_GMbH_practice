@@ -1,0 +1,17 @@
+:root {
+  --background: 210, 20%, 98%;
+  --foreground: 210, 20%, 10%;
+  --border: 210, 10%, 85%;
+  --primary: 226, 70%, 55%;
+  --card: 210, 20%, 95%;
+  --card-foreground: 210, 20%, 10%;
+}
+
+.dark {
+  --background: 210, 20%, 10%;
+  --foreground: 210, 20%, 96%;
+  --border: 210, 5%, 30%;
+  --card: 210, 15%, 15%;
+  --card-foreground: 210, 20%, 96%;
+  --primary: 226, 70%, 55%;
+}

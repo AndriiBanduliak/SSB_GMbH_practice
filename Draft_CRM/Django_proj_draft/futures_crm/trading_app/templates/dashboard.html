@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mx-auto px-4 py-8 space-y-6">
+  <h2 class="text-2xl font-bold tracking-tight">Dashboard</h2>
+  <div>
+    <canvas id="pnlChart" class="h-64 w-full"></canvas>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const pnlData = JSON.parse('{{ pnl_json|escapejs }}');
+  const ctx = document.getElementById('pnlChart').getContext('2d');
+  const labels = pnlData.map(item => item.date);
+  const dataValues = pnlData.map(item => item.value);
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'PnL',
+        data: dataValues,
+        borderColor: 'hsl(var(--primary))',
+        backgroundColor: 'rgba(59,130,246,0.2)',
+        fill: true
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          ticks: {
+            callback: function(value) {
+              return '$' + value;
+            }
+          }
+        }
+      }
+    }
+  });
+</script>
+{% endblock %}

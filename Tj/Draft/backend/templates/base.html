@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}">
+<head>
+  <meta charset="UTF-8">
+  <title>{% block title %}Trading Journal{% endblock %}</title>
+  <!-- Подключаем Bootstrap -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      background: #f8fafc; /* светлый фон */
+      padding-top: 70px;
+    }
+    .navbar {
+      background-color: #23395d; /* темная синевато-серая */
+    }
+    .navbar-brand {
+      font-weight: bold;
+      color: #fff !important;
+    }
+    .navbar-nav .nav-link {
+      color: #fff !important;
+    }
+    .card {
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
+    <a class="navbar-brand" href="/dashboard?lang={{ lang }}{% if token %}&token={{ token }}{% endif %}">Trading Journal</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav mr-auto">
+        {% if token %}
+          <li class="nav-item">
+            <a class="nav-link" href="/dashboard?lang={{ lang }}&token={{ token }}">{{ t.dashboard }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/settings?lang={{ lang }}&token={{ token }}">{{ t.settings }}</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/logout?lang={{ lang }}">{{ t.logout }}</a>
+          </li>
+        {% endif %}
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-toggle="dropdown">
+            {{ lang.upper() }}
+          </a>
+          <div class="dropdown-menu dropdown-menu-right">
+            <a class="dropdown-item" href="?lang=en{% if token %}&token={{ token }}{% endif %}">EN</a>
+            <a class="dropdown-item" href="?lang=ru{% if token %}&token={{ token }}{% endif %}">RU</a>
+            <a class="dropdown-item" href="?lang=de{% if token %}&token={{ token }}{% endif %}">DE</a>
+            <a class="dropdown-item" href="?lang=es{% if token %}&token={{ token }}{% endif %}">ES</a>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <div class="container mt-4">
+    {% block content %}{% endblock %}
+  </div>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

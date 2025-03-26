@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}{{ t.new_deal }}{% endblock %}
+{% block content %}
+<h2 class="mt-4">{{ t.new_deal }}</h2>
+<form action="/deals" method="post">
+  <div class="form-group">
+    <label>Full Name:</label>
+    <input type="text" class="form-control" name="full_name" required>
+  </div>
+  <div class="form-group">
+    <label>{{ t.password }}:</label>
+    <input type="password" class="form-control" name="password" required>
+  </div>
+  <div class="form-group">
+    <label>API Key:</label>
+    <input type="text" class="form-control" name="api_key" required>
+  </div>
+  <div class="form-group">
+    <label>Platform:</label>
+    <select name="platform" class="form-control">
+      <option value="binance">Binance</option>
+      <option value="kraken">Kraken</option>
+      <option value="cbpro">CBPro</option>
+      <option value="bitget">Bitget</option>
+      <option value="mexc">Mexc</option>
+      <option value="kucoin">Kucoin</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Crypto Currency:</label>
+    <select name="crypto_currency" class="form-control">
+      <option value="USDT">USDT</option>
+      <option value="BTC">BTC</option>
+      <option value="ETH">ETH</option>
+      <option value="BNB">BNB</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label>Quantity Bought:</label>
+    <input type="number" step="any" class="form-control" name="quantity_bought" id="quantity_bought" oninput="calculateProfit()" required>
+  </div>
+  <div class="form-group">
+    <label>Quantity Sold:</label>
+    <input type="number" step="any" class="form-control" name="quantity_sold" id="quantity_sold" oninput="calculateProfit()" required>
+  </div>
+  <div class="form-group">
+    <label>Exchange Rate (USD):</label>
+    <input type="number" step="any" class="form-control" name="exchange_rate" id="exchange_rate" oninput="calculateProfit()" required>
+  </div>
+  <div class="form-group">
+    <label>Profit (calculated):</label>
+    <input type="number" step="any" class="form-control" id="profit" readonly>
+  </div>
+  <button type="submit" class="btn btn-primary">Submit Deal</button>
+</form>
+<script>
+function calculateProfit() {
+  var bought = parseFloat(document.getElementById('quantity_bought').value) || 0;
+  var sold = parseFloat(document.getElementById('quantity_sold').value) || 0;
+  var rate = parseFloat(document.getElementById('exchange_rate').value) || 0;
+  var profit = (sold - bought) * rate;
+  document.getElementById('profit').value = profit.toFixed(2);
+}
+</script>
+{% endblock %}
