@@ -4,18 +4,21 @@ import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { LanguageProvider } from './contexts/LanguageContext';
-import './i18n'; // Инициализация i18next
-import './styles/global.css'; // Глобальные стили
+import { AuthProvider } from './contexts/AuthContext'; // <--- Импорт
+import './i18n';
+import './styles/global.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <ThemeProvider>
-        <LanguageProvider>
-          <App />
-        </LanguageProvider>
-      </ThemeProvider>
+      <AuthProvider> {/* <--- Обернуть */}
+        <ThemeProvider>
+          <LanguageProvider>
+            <App />
+          </LanguageProvider>
+        </ThemeProvider>
+      </AuthProvider> {/* <--- Закрыть */}
     </BrowserRouter>
   </React.StrictMode>
 );

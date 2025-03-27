@@ -1,22 +1,22 @@
 from flask import Blueprint, request, jsonify
 from .. import db
 from ..models import User
-# Добавьте импорт для аутентификации, когда она будет готова
-# from flask_jwt_extended import jwt_required, get_jwt_identity
+# Заменяем временный ID на получение из JWT
+from flask_jwt_extended import jwt_required, get_jwt_identity  # <--- Импортировать
 
 settings_bp = Blueprint('settings', __name__)
 
-# Временный хардкод ID пользователя для примера
-# В реальном приложении нужно получать ID из токена аутентификации
-TEMP_USER_ID = 1
+# Убираем временный хардкод ID пользователя
+# TEMP_USER_ID = 1
+
 
 @settings_bp.route('/', methods=['GET'])
-# @jwt_required() # Раскомментируйте после настройки JWT
+@jwt_required()  # <--- Добавляем декоратор для защиты
 def get_settings():
-    # user_id = get_jwt_identity() # Получение ID из токена
-    user_id = TEMP_USER_ID # Временный хардкод
+    user_id = get_jwt_identity()  # <--- Получаем ID пользователя из токена
     user = User.query.get(user_id)
     if not user:
+        # Эта ситуация маловероятна, если токен валиден, но для полноты
         return jsonify({"message": "User not found"}), 404
 
     return jsonify({
@@ -24,11 +24,11 @@ def get_settings():
         "theme": user.theme
     }), 200
 
+
 @settings_bp.route('/', methods=['PUT'])
-# @jwt_required()
+@jwt_required()  # <--- Добавляем декоратор для защиты
 def update_settings():
-    # user_id = get_jwt_identity()
-    user_id = TEMP_USER_ID # Временный хардкод
+    user_id = get_jwt_identity()  # <--- Получаем ID пользователя из токена
     user = User.query.get(user_id)
     if not user:
         return jsonify({"message": "User not found"}), 404
@@ -55,8 +55,10 @@ def update_settings():
             }), 200
         except Exception as e:
             db.session.rollback()
+            print(f"Error updating settings: {e}")  # Логирование ошибки
             return jsonify({"message": "Failed to update settings", "error": str(e)}), 500
     else:
         return jsonify({"message": "No valid settings provided to update"}), 400
-
+    
+    
 # Добавьте здесь эндпоинты для других настроек (профиль, уведомления и т.д.)
