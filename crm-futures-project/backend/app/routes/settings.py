@@ -1,23 +1,33 @@
 from flask import Blueprint, request, jsonify
 from .. import db
 from ..models import User
-# Заменяем временный ID на получение из JWT
-from flask_jwt_extended import jwt_required, get_jwt_identity  # <--- Импортировать
+# Импортируем нужные функции JWT
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 settings_bp = Blueprint('settings', __name__)
 
-# Убираем временный хардкод ID пользователя
-# TEMP_USER_ID = 1
-
+# --- Хук для логгирования заголовков перед КАЖДЫМ запросом к этому блюпринту ---
+@settings_bp.before_request
+def log_request_headers_hook():
+    # Этот код выполнится перед каждым GET или PUT к /api/settings/
+    # и ДО того, как сработает декоратор @jwt_required
+    print("---")
+    print(f"Incoming {request.method} request to {request.path}")
+    print("Headers:")
+    # Выводим заголовки в удобном формате
+    for header, value in request.headers.items():
+        print(f"  {header}: {value}")
+    print("---")
+# -----------------------------------------------------------------------------
 
 @settings_bp.route('/', methods=['GET'])
-@jwt_required()  # <--- Добавляем декоратор для защиты
+# Явно указываем, что токен ожидается ТОЛЬКО в заголовках
+@jwt_required(locations=['headers'])
 def get_settings():
-    user_id = get_jwt_identity()  # <--- Получаем ID пользователя из токена
+    user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
-        # Эта ситуация маловероятна, если токен валиден, но для полноты
-        return jsonify({"message": "User not found"}), 404
+        return jsonify({"message": "User not found for token"}), 404 # Уточним сообщение
 
     return jsonify({
         "language": user.language,
@@ -26,12 +36,14 @@ def get_settings():
 
 
 @settings_bp.route('/', methods=['PUT'])
-@jwt_required()  # <--- Добавляем декоратор для защиты
+# Явно указываем, что токен ожидается ТОЛЬКО в заголовках
+@jwt_required(locations=['headers'])
 def update_settings():
-    user_id = get_jwt_identity()  # <--- Получаем ID пользователя из токена
+    # Логгирование заголовков уже произошло в before_request хуке
+    user_id = get_jwt_identity()
     user = User.query.get(user_id)
     if not user:
-        return jsonify({"message": "User not found"}), 404
+        return jsonify({"message": "User not found for token"}), 404 # Уточним сообщение
 
     data = request.get_json()
     if not data:
@@ -48,6 +60,8 @@ def update_settings():
     if updated:
         try:
             db.session.commit()
+            # Логгируем успешное обновление
+            print(f"User {user_id} updated settings: lang={user.language}, theme={user.theme}")
             return jsonify({
                 "message": "Settings updated successfully",
                 "language": user.language,
@@ -55,10 +69,12 @@ def update_settings():
             }), 200
         except Exception as e:
             db.session.rollback()
-            print(f"Error updating settings: {e}")  # Логирование ошибки
-            return jsonify({"message": "Failed to update settings", "error": str(e)}), 500
+            # Логируем ошибку базы данных
+            print(f"DATABASE ERROR updating settings for user {user_id}: {e}")
+            return jsonify({"message": "Database error during settings update"}), 500 # Уточним сообщение
     else:
-        return jsonify({"message": "No valid settings provided to update"}), 400
-    
-    
-# Добавьте здесь эндпоинты для других настроек (профиль, уведомления и т.д.)
+        # Этот блок вряд ли должен достигаться при текущей логике,
+        # но если данные некорректны, вернем 400
+        return jsonify({"message": "No valid settings data found in request"}), 400
+
+# Другие эндпоинты (если будут)

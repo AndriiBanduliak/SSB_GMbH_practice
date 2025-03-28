@@ -1,4 +1,5 @@
-#version: '3.8'
+# Строку version можно оставить или убрать, если Docker Compose ругается
+# version: '3.8'
 
 services:
   backend:
@@ -7,15 +8,20 @@ services:
       - "5001:5000" # Хост:Контейнер
     volumes:
       - ./backend:/app # Для разработки, чтобы изменения кода подхватывались
+    # Можно оставить env_file, но значение DATABASE_URL из environment ниже будет иметь приоритет
     env_file:
       - .env
     environment:
+      # Ссылки на переменные из .env (кроме DATABASE_URL)
       - FLASK_APP=${FLASK_APP}
       - FLASK_RUN_HOST=${FLASK_RUN_HOST}
       - FLASK_DEBUG=${FLASK_DEBUG}
-      - DATABASE_URL=${DATABASE_URL}
       - SECRET_KEY=${SECRET_KEY}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # ЯВНО задаем DATABASE_URL здесь, используя ПРАВИЛЬНЫЙ пароль (например, 'password')
+      # Замените 'password' на ваш актуальный пароль, если он другой,
+      # но он должен совпадать с MYSQL_PASSWORD в .env файле
+      - DATABASE_URL=mysql+mysqlconnector://crm_user:password@db:3306/crm_db
     depends_on:
       - db
     networks:
@@ -36,10 +42,11 @@ services:
     image: mysql:8.0
     command: --default-authentication-plugin=mysql_native_password # Для совместимости со старыми драйверами
     environment:
+      # Эти значения по-прежнему берутся из .env файла
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} # <-- Использует пароль из .env для создания пользователя
     volumes:
       - mysql_data:/var/lib/mysql
       - ./db_init:/docker-entrypoint-initdb.d # Запуск init.sql при первом старте
