@@ -1,0 +1,3 @@
+2025-04-01 17:50:31,300 [CRITICAL] discord_twitter_bot: TARGET_DISCORD_CHANNEL_ID должен быть числом.
+2025-04-01 17:51:25,584 [CRITICAL] discord_twitter_bot: Отсутствуют обязательные переменные окружения.
+2025-04-01 17:52:00,187 [CRITICAL] discord_twitter_bot: Отсутствуют обязательные переменные окружения.
