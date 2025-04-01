@@ -1,0 +1,67 @@
+# version: '3.8' # Строка версии не обязательна для последних версий Docker Compose
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./backend:/app
+    env_file:
+      - .env
+    # Переменные из environment имеют приоритет над env_file
+    environment:
+      - FLASK_APP=${FLASK_APP}
+      - FLASK_RUN_HOST=${FLASK_RUN_HOST}
+      - FLASK_DEBUG=${FLASK_DEBUG}
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
+      # Явно задаем DATABASE_URL здесь, используя ПРАВИЛЬНЫЙ пароль
+      - DATABASE_URL=mysql+mysqlconnector://crm_user:password@db:3306/crm_db # Убедитесь, что пароль совпадает с MYSQL_PASSWORD в .env
+    depends_on:
+      db:
+        condition: service_healthy # Ждать, пока сервис db не станет 'healthy'
+    networks:
+      - crm_network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - crm_network
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD} # Использует пароль из .env для создания пользователя
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./db_init:/docker-entrypoint-initdb.d
+    ports:
+      - "3307:3306"
+    networks:
+      - crm_network
+    # Проверка состояния MySQL (важно для depends_on)
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "-u", "", "-p"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s # Дать время на первичный запуск
+
+volumes:
+  mysql_data:
+
+networks:
+  crm_network:
+    driver: bridge
+

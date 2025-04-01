@@ -1,0 +1,186 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+/* --- Basic Theming --- */
+
+/* Light Theme (Default) */
+body.light {
+  background-color: #ffffff;
+  color: #24292e; /* GitHub-like dark text */
+}
+
+body.light nav {
+  background-color: #f6f8fa; /* GitHub-like light gray */
+  border-bottom: 1px solid #e1e4e8;
+}
+
+body.light a {
+  color: #0366d6; /* GitHub-like blue link */
+  text-decoration: none;
+}
+body.light a:hover {
+  text-decoration: underline;
+}
+
+body.light button {
+  background-color: #2ea44f; /* GitHub-like green button */
+  color: white;
+  border: 1px solid rgba(27, 31, 35, 0.15);
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+}
+body.light button:hover {
+  background-color: #2c974b;
+  border-color: rgba(27, 31, 35, 0.15);
+}
+body.light button:disabled {
+  background-color: #94d3a2;
+  color: rgba(255, 255, 255, 0.75);
+  border-color: rgba(27, 31, 35, 0.1);
+  cursor: not-allowed;
+}
+
+body.light input[type="text"],
+body.light input[type="email"],
+body.light input[type="password"],
+body.light select {
+    margin-top: 4px;
+    margin-bottom: 15px;
+    display: block;
+    width: 95%; /* Slightly less than 100% */
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #24292e;
+    vertical-align: middle;
+    background-color: #ffffff;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid #d1d5da;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,0.075);
+}
+body.light input:focus, body.light select:focus {
+    outline: none;
+    border-color: #0366d6;
+    box-shadow: inset 0 1px 2px rgba(27,31,35,0.075), 0 0 0 3px rgba(3,102,214,0.3);
+}
+
+/* Dark Theme */
+body.dark {
+  background-color: #0d1117; /* GitHub dark background */
+  color: #c9d1d9; /* GitHub dark text */
+}
+
+body.dark nav {
+  background-color: #161b22; /* GitHub dark header */
+  border-bottom: 1px solid #30363d;
+}
+
+body.dark a {
+  color: #58a6ff; /* GitHub dark blue link */
+  text-decoration: none;
+}
+body.dark a:hover {
+  text-decoration: underline;
+}
+
+body.dark button {
+  background-color: #238636; /* GitHub dark green button */
+  color: #ffffff;
+  border: 1px solid rgba(240, 246, 252, 0.1);
+  padding: 6px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background-color 0.2s cubic-bezier(0.3, 0, 0.5, 1);
+}
+body.dark button:hover {
+  background-color: #2ea043;
+  border-color: rgba(240, 246, 252, 0.1);
+}
+body.dark button:disabled {
+  background-color: #1a4c24;
+  color: rgba(240, 246, 252, 0.5);
+  border-color: rgba(240, 246, 252, 0.1);
+  cursor: not-allowed;
+}
+
+body.dark input[type="text"],
+body.dark input[type="email"],
+body.dark input[type="password"],
+body.dark select {
+    margin-top: 4px;
+    margin-bottom: 15px;
+    display: block;
+    width: 95%;
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 20px;
+    color: #c9d1d9;
+    vertical-align: middle;
+    background-color: #0d1117;
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.075);
+}
+body.dark input:focus, body.dark select:focus {
+    outline: none;
+    border-color: #1f6feb;
+    background-color: #161b22;
+    box-shadow: 0 0 0 3px rgba(31, 111, 235, 0.3);
+}
+
+/* --- Basic Layout & Components --- */
+.app-container {
+  min-height: 100vh;
+}
+
+label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    display: block;
+}
+
+nav {
+    /* Styles are in body.light/dark sections */
+}
+nav ul {
+    /* Styles are in App.js inline */
+}
+nav li {
+    /* Styles are in App.js inline */
+}
+
+/* Settings Specific */
+form div label input[type="radio"] {
+    display: inline-block; /* Keep radios inline */
+    width: auto;
+    margin-right: 5px;
+    margin-left: 15px;
+    margin-bottom: 0;
+}
+form div label:first-of-type input[type="radio"] {
+    margin-left: 0; /* No left margin for the first radio */
+}

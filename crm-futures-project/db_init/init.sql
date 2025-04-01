@@ -8,7 +8,7 @@ USE crm_db;
 -- В реальном проекте пароль должен храниться в виде хеша!
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(80) UNIQUE NOT NULL,
+    username VARCHAR(80) UNIQUE NOT NULL, 
     email VARCHAR(120) UNIQUE NOT NULL,
     password_hash VARCHAR(128) NOT NULL, -- Здесь будет храниться хеш пароля
     language VARCHAR(5) DEFAULT 'en',    -- 'en', 'de', 'ru'

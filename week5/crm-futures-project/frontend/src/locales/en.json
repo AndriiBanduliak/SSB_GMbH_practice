@@ -1,0 +1,37 @@
+{
+  "navigation": {
+    "dashboard": "Dashboard",
+    "settings": "Settings"
+  },
+  "dashboard": {
+    "title": "Dashboard Overview"
+  },
+  "settings": {
+    "title": "User Settings",
+    "language": "Language",
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "save": "Save Settings",
+    "success": "Settings saved successfully!",
+    "error": "Failed to save settings."
+  },
+  "login": {
+      "title": "Login",
+      "username_email": "Username or Email",
+      "password": "Password",
+      "login_button": "Login",
+      "no_account": "Don't have an account?",
+      "register_link": "Register here"
+  },
+  "register": {
+      "title": "Register",
+      "username": "Username",
+      "email": "Email",
+      "password": "Password",
+      "register_button": "Register",
+      "have_account": "Already have an account?",
+      "login_link": "Login here",
+      "success": "Registration successful! Redirecting to login..."
+  }
+}
