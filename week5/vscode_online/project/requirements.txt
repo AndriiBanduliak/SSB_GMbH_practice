@@ -1,0 +1,3 @@
+discord.py>=2.0.0 # Указываем версию 2.x для поддержки Intents и Cogs
+python-dotenv
+tweepy>=4.0.0 # Указываем версию 4.x для API v2
