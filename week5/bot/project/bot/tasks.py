@@ -32,7 +32,7 @@ class TasksCog(commands.Cog, name="Hashtag Monitor"):
         self.check_hashtags.cancel()
         log.info("Фоновая задача check_hashtags остановлена.")
 
-    @tasks.loop(minutes=15)
+    @tasks.loop(hours=2)
     async def check_hashtags(self):
         """Периодически ищет твиты по хештегам и постит самый популярный."""
         if not self.twitter_service or self.twitter_service.init_failed:
@@ -53,7 +53,7 @@ class TasksCog(commands.Cog, name="Hashtag Monitor"):
         query = f"({' OR '.join(f'#{tag}' for tag in self.target_hashtags)}) -is:retweet lang:en"
         log.info(self._("TASK_SEARCH_QUERY", query=query))
 
-        response = await self.twitter_service.search_recent_tweets(query=query, max_results=100)
+        response = await self.twitter_service.search_recent_tweets(query=query, max_results=10)
 
         # *** ОБРАБОТКА RATE LIMIT ***
         if response and "rate_limit_sleep" in response:

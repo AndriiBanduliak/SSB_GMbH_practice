@@ -1,0 +1,5 @@
+{
+    "keywords": ["suspicious", "hack", "malware"],
+    "whitelist": ["system.exe", "explorer.exe"]
+  }
+  
