@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.class
+
+# Virtual environment
+venv/
+.venv/
+env/
+ENV/
+# Если вы используете другое имя для venv, добавьте его
+
+# Environment variables
+.env
+
+# Log files
+*.log
+logs/
+
+# Runtime files
+*.pid
+*.seed
+*.db
+*.sqlite*
+
+# Bot specific state files
+last_tweet.id
+server_settings.json
+
+# OS generated files
+.DS_Store
+Thumbs.db
