@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  lint-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    - name: Install dependencies
+      run: |
+        pip install poetry
+        poetry install
+    - name: Format check (Black)
+      run: poetry run black --check .
+    - name: Import order check (isort)
+      run: poetry run isort --check-only .
+    - name: Type check (mypy)
+      run: poetry run mypy src
+    - name: Lint (Flake8)
+      run: poetry run flake8
+    - name: Run tests
+      run: poetry run pytest --maxfail=1 --disable-warnings -q

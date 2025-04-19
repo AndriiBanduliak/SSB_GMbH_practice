@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "antyvirus-data-processing"
+version = "0.1.0"
+description = "Sales data processing toolkit with VAT calculations and summaries."
+license = "MIT"
+
+[tool.poetry.dependencies]
+python = ">=3.8,<4.0"
+pandas = "^1.5.0"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.0"
+mypy = "^1.0"
+black = "^23.3.0"
+isort = "^5.10.1"
+flake8 = "^6.0.0"
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = true
