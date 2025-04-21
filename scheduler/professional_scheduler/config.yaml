@@ -1,0 +1,79 @@
+# config.yaml
+#
+# Scheduler configuration file
+
+# --- Logging Configuration ---
+# Uses Python's logging.config.dictConfig format.
+# You can define handlers (console, file), formatters, loggers, etc.
+logging:
+  version: 1
+  disable_existing_loggers: False
+  formatters:
+    standard:
+      format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  handlers:
+    console:
+      class: logging.StreamHandler
+      formatter: standard
+      level: INFO
+      stream: ext://sys.stdout
+    file:
+      class: logging.handlers.RotatingFileHandler
+      formatter: standard
+      level: INFO
+      filename: scheduler.log
+      maxBytes: 1048576 # 1MB
+      backupCount: 5
+  loggers:
+    # Root logger
+    '':
+      handlers: [console, file]
+      level: INFO
+      propagate: True
+    # Example: configure a specific logger
+    # 'tasks':
+    #   handlers: [file]
+    #   level: DEBUG
+    #   propagate: False
+
+# --- Task Definitions ---
+# List of tasks to be scheduled.
+# Each task requires a 'name', 'function', and 'schedule'.
+# Optional: 'params' (dictionary of parameters passed to the task function).
+tasks:
+  - name: Daily Backup
+    function: backup_task
+    schedule:
+      type: daily
+      at: "09:00"
+    params:
+      backup_location: "/tmp/scheduler_backups" # Example parameter
+
+  - name: Temporary Files Cleanup
+    function: clean_temp_task
+    schedule:
+      type: every
+      interval: 1
+      unit: minutes # Supported units: seconds, minutes, hours, days, weeks
+    params:
+      temp_dir: "/tmp/scheduler_temp" # Example parameter
+      age_days: 0 # Clean files older than 0 days (i.e., all) for testing
+
+  - name: Weekly Report Generation
+    function: report_task
+    schedule:
+      type: every # Using 'every' for demonstration purposes in a presentation
+      interval: 3
+      unit: minutes
+    params:
+      report_format: "txt" # Example parameter
+
+  # Example of adding a simple task
+  - name: Simple Greeting
+    function: simple_greet_task
+    schedule:
+      type: every
+      interval: 30
+      unit: seconds
+
+# Add more tasks as needed following the structure above.
