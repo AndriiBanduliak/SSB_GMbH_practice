@@ -2,8 +2,8 @@ from pymexc import futures
 import time
 import json
 
-api_key = "mx0vgley1IlnB4RGnB"         # Замените на ваш API ключ для фьючерсов
-api_secret = "91953a3f8bfb4eab9fe1f674af4c1a35"  # Замените на ваш секретный ключ
+api_key = "mx"         # Замените на ваш API ключ для фьючерсов
+api_secret = "91"  # Замените на ваш секретный ключ
 
 # Имя файла для сохранения сообщений
 JSON_FILENAME = "messages.json"
