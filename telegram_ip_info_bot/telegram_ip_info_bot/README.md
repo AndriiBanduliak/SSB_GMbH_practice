@@ -1,6 +1,3 @@
-Okay, you're absolutely right! My apologies – I focused on the script itself and missed the broader context of a project. Here’s a professional-grade `README.md` file for the Telegram IP Lookup Bot project, incorporating best practices:
-
-```markdown
 # Telegram IP Lookup Bot
 
 **A simple Telegram bot that provides detailed information about an IP address or hostname.**
