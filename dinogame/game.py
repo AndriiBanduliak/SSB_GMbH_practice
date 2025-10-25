@@ -53,7 +53,7 @@ if background_img.get_height() != SCREEN_HEIGHT:
 BG_WIDTH = background_img.get_width()
 
 # --- Масштабирование спрайта персонажа ---
-target_player_height = 120 # <<<--- ЗАДАЙ ЗДЕСЬ ЖЕЛАЕМУЮ ВЫСОТУ ПЕРСОНАЖА
+target_player_height = 120 # <<<--- ЗАДАЕМ ЗДЕСЬ ЖЕЛАЕМУЮ ВЫСОТУ ПЕРСОНАЖА
 print(f"Оригинальная высота персонажа: {player_img_original.get_height()}")
 print(f"Масштабирование персонажа до высоты: {target_player_height}")
 
