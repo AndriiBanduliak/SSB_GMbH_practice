@@ -9,13 +9,14 @@ class CoinStatusBar extends DrawableObject {
     
     percentage = 0;
 
-    constructor() {
+    constructor(canvas) {
         super();
+        this.canvas = canvas;
         // Загружаем все изображения в кэш (метод loadImages определён в DrawableObject)
         this.loadImages(this.IMAGES);
         // Устанавливаем позицию и размеры статус-бара
-        this.x = 40; 
-        this.y = 60; 
+        this.x = canvas ? canvas.width - 240 : 480; // Правый верхний угол
+        this.y = 80; // Под полосой здоровья персонажа
         this.width = 200;
         this.height = 50;
         // Устанавливаем изначальное значение процента (0)

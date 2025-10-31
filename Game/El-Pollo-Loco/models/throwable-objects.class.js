@@ -6,6 +6,7 @@ class ThrowableObjects extends MovableObject {
         this.height = 60;
         this.width = 70;
         this.hasHit = false;
+        this.intervals = []; // Массив для хранения интервалов
         this.startThrow();
     }
     
@@ -13,9 +14,20 @@ class ThrowableObjects extends MovableObject {
         // Задаём отрицательное значение, чтобы бутылка сразу полетела вниз
         this.speedY = -20;
         this.applyGravity();
-        setInterval(() => {
-            this.x += 5;
+        const movementInterval = setInterval(() => {
+            if (!this.hasHit) {
+                this.x += 5;
+            }
         }, 20);
+        this.intervals.push(movementInterval);
+    }
+
+    /**
+     * Очищает все интервалы бутылки
+     */
+    cleanup() {
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
     }
     
     // (Метод checkCollisionWith можно оставить для альтернативной проверки столкновений)

@@ -23,14 +23,18 @@ class DatabaseManager:
         Инициализирует менеджер базы данных и устанавливает соединение.
         :param db_name: Имя файла базы данных SQLite (например, 'multilang_bot.db').
         """
-        # `check_same_thread=False` необходим, если вы используете одно соединение
-        # к SQLite из разных потоков, что может быть в случае с telegram.ext.
-        # Однако, более надежным является использование пула соединений
-        # или aiosqlite для асинхронной работы.
-        self.conn = sqlite3.connect(db_name, check_same_thread=False)
-        self.cursor = self.conn.cursor()
-        self._create_table() # Убеждаемся, что таблица существует при инициализации
-        logger.info(f"DatabaseManager initialized for DB: {db_name}")
+        try:
+            # `check_same_thread=False` необходим, если вы используете одно соединение
+            # к SQLite из разных потоков, что может быть в случае с telegram.ext.
+            # Однако, более надежным является использование пула соединений
+            # или aiosqlite для асинхронной работы.
+            self.conn = sqlite3.connect(db_name, check_same_thread=False)
+            self.cursor = self.conn.cursor()
+            self._create_table() # Убеждаемся, что таблица существует при инициализации
+            logger.info(f"DatabaseManager initialized for DB: {db_name}")
+        except sqlite3.Error as e:
+            logger.critical(f"Failed to initialize database connection: {e}")
+            raise
 
     def _create_table(self):
         """
@@ -66,38 +70,44 @@ class DatabaseManager:
         :param first_name: Имя пользователя Telegram.
         :return: Кортеж из (questions_count, documents_count, language_code) для пользователя.
         """
-        today_str = date.today().isoformat() # Получаем текущую дату в формате 'YYYY-MM-DD'
-        
-        self.cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
-        user = self.cursor.fetchone() # Пытаемся найти пользователя
-        
-        if user is None:
-            # Пользователь новый, создаем запись
-            self.cursor.execute(
-                "INSERT INTO users (user_id, username, first_name, last_reset_date, language_code) VALUES (?, ?, ?, ?, ?)",
-                (user_id, username, first_name, today_str, 'uk') # По умолчанию украинский язык
-            )
+        try:
+            today_str = date.today().isoformat() # Получаем текущую дату в формате 'YYYY-MM-DD'
+            
+            self.cursor.execute("SELECT * FROM users WHERE user_id = ?", (user_id,))
+            user = self.cursor.fetchone() # Пытаемся найти пользователя
+            
+            if user is None:
+                # Пользователь новый, создаем запись
+                self.cursor.execute(
+                    "INSERT INTO users (user_id, username, first_name, last_reset_date, language_code) VALUES (?, ?, ?, ?, ?)",
+                    (user_id, username, first_name, today_str, 'uk') # По умолчанию украинский язык
+                )
+                self.conn.commit()
+                logger.info(f"New user created: {user_id} (username: {username})")
+                return 0, 0, 'uk' # Для нового пользователя счетчики обнулены, язык по умолчанию
+            
+            # Пользователь существует, обновляем username и first_name на случай их изменения в Telegram
+            self.cursor.execute("UPDATE users SET username = ?, first_name = ? WHERE user_id = ?", (username, first_name, user_id))
             self.conn.commit()
-            logger.info(f"New user created: {user_id} (username: {username})")
-            return 0, 0, 'uk' # Для нового пользователя счетчики обнулены, язык по умолчанию
-        
-        # Пользователь существует, обновляем username и first_name на случай их изменения в Telegram
-        self.cursor.execute("UPDATE users SET username = ?, first_name = ? WHERE user_id = ?", (username, first_name, user_id))
-        self.conn.commit()
-        
-        # Разбираем полученные данные пользователя
-        # user tuple indices: 0:user_id, 1:username, 2:first_name, 3:phone_number, 4:questions_count, 5:documents_count, 6:last_reset_date, 7:language_code
-        q_count, d_count, last_reset, lang_code = user[4], user[5], user[6], user[7]
-        
-        # Если дата последнего сброса не соответствует текущей дате, сбрасываем счетчики
-        if last_reset != today_str:
-            self.cursor.execute("UPDATE users SET questions_count = 0, documents_count = 0, last_reset_date = ? WHERE user_id = ?", (today_str, user_id))
-            self.conn.commit()
-            logger.info(f"Daily limits reset for user {user_id} ({username}).")
-            return 0, 0, lang_code # Возвращаем обнуленные счетчики
-        
-        # Если лимиты уже были сброшены сегодня, возвращаем текущие значения
-        return q_count, d_count, lang_code
+            
+            # Разбираем полученные данные пользователя
+            # user tuple indices: 0:user_id, 1:username, 2:first_name, 3:phone_number, 4:questions_count, 5:documents_count, 6:last_reset_date, 7:language_code
+            q_count, d_count, last_reset, lang_code = user[4], user[5], user[6], user[7]
+            
+            # Если дата последнего сброса не соответствует текущей дате, сбрасываем счетчики
+            if last_reset != today_str:
+                self.cursor.execute("UPDATE users SET questions_count = 0, documents_count = 0, last_reset_date = ? WHERE user_id = ?", (today_str, user_id))
+                self.conn.commit()
+                logger.info(f"Daily limits reset for user {user_id} ({username}).")
+                return 0, 0, lang_code # Возвращаем обнуленные счетчики
+            
+            # Если лимиты уже были сброшены сегодня, возвращаем текущие значения
+            return q_count, d_count, lang_code
+            
+        except sqlite3.Error as e:
+            logger.error(f"Database error in get_or_create_user for user {user_id}: {e}")
+            # Возвращаем значения по умолчанию в случае ошибки БД
+            return 0, 0, 'uk'
 
     def set_user_language(self, user_id: int, lang_code: str):
         """

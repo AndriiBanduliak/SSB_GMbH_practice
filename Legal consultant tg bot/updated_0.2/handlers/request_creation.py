@@ -33,7 +33,7 @@ DEFAULT_REQUEST_DATA = {
     'legal_aid_subject': '',
     'recipient_details': '',
     'outgoing_number': 'N/A', # Может быть пропущено
-    'request_body': '',
+    'request_body': ''
 }
 
 class RequestCreationHandlers:

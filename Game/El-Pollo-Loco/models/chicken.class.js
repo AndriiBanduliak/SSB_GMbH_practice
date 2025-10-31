@@ -4,6 +4,7 @@ class Chicken extends MovableObject {
     width = 80;
     isDead = false;
     energy = 15; // Добавляем свойство "здоровье"
+    intervals = []; // Массив для хранения интервалов
 
     IMAGES_WALKING = [
         'img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
@@ -42,19 +43,30 @@ class Chicken extends MovableObject {
 
     animate() {
         // Движение влево
-        setInterval(() => {
-            this.moveLeft();
+        const movementInterval = setInterval(() => {
+            if (!this.isDead) {
+                this.moveLeft();
+            }
         }, 1000 / 60);
+        this.intervals.push(movementInterval);
 
         // Анимация "шага"
-        setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+        const animationInterval = setInterval(() => {
+            if (!this.isDead) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 1000);
+        this.intervals.push(animationInterval);
     }
 
     die() {
         if (this.isDead) return;
         this.isDead = true;
+        
+        // Очищаем интервалы движения и анимации
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
+        
         // "Анимация смерти": курица "улетает" вверх
         let flyUpInterval = setInterval(() => {
             this.y -= 5;

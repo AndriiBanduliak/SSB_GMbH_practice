@@ -23,7 +23,7 @@ class MovableObject extends DrawableObject {
         }
     }
 
-    isColling(mo) {
+    isCollidingOld(mo) {
         return this.x + this.width > mo.x &&
                this.y + this.height > mo.y &&
                this.x < mo.x &&
@@ -67,9 +67,9 @@ class MovableObject extends DrawableObject {
         this.x += this.speed;
     }
 
-    // Изменено: теперь x не становится меньше 0
+    // Изменено: персонаж может двигаться немного за левую границу, камера будет следовать
     moveLeft() {
-        this.x = Math.max(0, this.x - this.speed);
+        this.x -= this.speed;
     }
 
     jump() {

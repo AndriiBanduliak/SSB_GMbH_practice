@@ -17,9 +17,15 @@ class OpenAIService:
         Инициализирует клиент OpenAI.
         :param api_key: Ваш ключ API для OpenAI.
         """
-        # AsyncOpenAI - асинхронный клиент для неблокирующих операций
-        self.client = AsyncOpenAI(api_key=api_key)
-        logger.info("OpenAIService: OpenAI client initialized.")
+        try:
+            if not api_key:
+                raise ValueError("OpenAI API key is required")
+            # AsyncOpenAI - асинхронный клиент для неблокирующих операций
+            self.client = AsyncOpenAI(api_key=api_key)
+            logger.info("OpenAIService: OpenAI client initialized.")
+        except Exception as e:
+            logger.critical(f"Failed to initialize OpenAI client: {e}")
+            raise
 
     async def get_ai_response(self, system_prompt_key: str, user_prompt: str, lang_code: str, document_content: str = "") -> str:
         """
@@ -56,18 +62,34 @@ class OpenAIService:
         ]
         
         try:
-            # Отправляем запрос к OpenAI API
-            response = await self.client.chat.completions.create(
-                model=Config.OPENAI_MODEL,  # Используем модель, определенную в конфигурации
-                messages=messages,
-                max_tokens=3500,            # Максимальное количество токенов в ответе AI
-                temperature=0.3             # Температура для контроля креативности (0.0-2.0, 0.3 - сбалансировано)
+            # Отправляем запрос к OpenAI API с таймаутом
+            import asyncio
+            response = await asyncio.wait_for(
+                self.client.chat.completions.create(
+                    model=Config.OPENAI_MODEL,  # Используем модель, определенную в конфигурации
+                    messages=messages,
+                    max_tokens=3500,            # Максимальное количество токенов в ответе AI
+                    temperature=0.3             # Температура для контроля креативности (0.0-2.0, 0.3 - сбалансировано)
+                ),
+                timeout=60.0  # 60 секунд таймаут
             )
             
             # Извлекаем и возвращаем текст ответа от AI
-            ai_response_content = response.choices[0].message.content
-            logger.debug(f"OpenAIService: Successfully got AI response for user prompt: {user_prompt[:50]}...")
-            return ai_response_content
+            if response.choices and len(response.choices) > 0:
+                ai_response_content = response.choices[0].message.content
+                if ai_response_content:
+                    logger.debug(f"OpenAIService: Successfully got AI response for user prompt: {user_prompt[:50]}...")
+                    return ai_response_content
+                else:
+                    logger.warning("OpenAIService: Received empty response from AI")
+                    return Translations.get_text(lang_code, "error_generic")
+            else:
+                logger.warning("OpenAIService: No choices in AI response")
+                return Translations.get_text(lang_code, "error_generic")
+            
+        except asyncio.TimeoutError:
+            logger.error("OpenAIService: Request to OpenAI API timed out")
+            return Translations.get_text(lang_code, "error_generic")
             
         except APIError as e:
             # Обработка специфических ошибок OpenAI API (например, проблемы с аутентификацией, лимиты, неверный запрос)

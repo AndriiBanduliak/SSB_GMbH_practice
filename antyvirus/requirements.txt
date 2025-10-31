@@ -1,0 +1,6 @@
+# Process Scanner Dependencies
+# Python 3.8+
+
+# Core dependencies
+psutil>=5.9.0,<6.0.0
+

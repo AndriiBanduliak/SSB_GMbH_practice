@@ -7,6 +7,7 @@ class Endboss extends MovableObject {
     x = 2500;    // Начальная позиция босса
     isDead = false; // Флаг, сигнализирующий о смерти босса
     opacity = 1;    // Свойство для эффекта затухания (1 = полностью видим)
+    intervals = []; // Массив для хранения интервалов
 
     // Массив путей к изображениям для анимации ходьбы
     IMAGES_WALKING = [
@@ -49,9 +50,12 @@ class Endboss extends MovableObject {
         // Запускаем анимацию ходьбы
         this.playAnimation(this.IMAGES_WALKING);
         // Обновляем анимацию каждые 100 мс
-        setInterval(() => {
-            this.playAnimation(this.IMAGES_WALKING);
+        const animationInterval = setInterval(() => {
+            if (!this.isDead) {
+                this.playAnimation(this.IMAGES_WALKING);
+            }
         }, 100);
+        this.intervals.push(animationInterval);
         // Внимание: отрисовка статус-бара осуществляется извне (например, из world.class.js)
     }
 
@@ -99,6 +103,11 @@ class Endboss extends MovableObject {
      */
     die() {
         this.isDead = true;
+        
+        // Очищаем интервалы анимации
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
+        
         // Запускаем эффект затухания (fade-out)
         let fadeInterval = setInterval(() => {
             this.opacity -= 0.05;

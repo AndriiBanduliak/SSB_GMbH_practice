@@ -5,13 +5,14 @@ class World {
     ctx;
     keyboard;
     camera_x = 0;
-    statusBar = new StatusBar();
+    statusBar;
     throwableObjects = [];
     backgroundMusic;
     musicInterval;
-    coinStatusBar = new CoinStatusBar();
+    coinStatusBar;
     coins = [];
     gameEnded = false; // Флаг, сигнализирующий о завершении игры
+    intervals = []; // Массив для хранения всех интервалов
 
     constructor(canvas, keyboard) {
         this.canThrow = true; // Флаг для управления частотой бросков
@@ -26,8 +27,9 @@ class World {
         this.backgroundMusic.loop = true;
         this.backgroundMusic.volume = 0.1;
 
-        // Инициализируем панель для монет
-        this.coinStatusBar = new CoinStatusBar();
+        // Инициализируем панели с передачей canvas
+        this.statusBar = new StatusBar(canvas);
+        this.coinStatusBar = new CoinStatusBar(canvas);
 
         // Запускаем основной цикл отрисовки
         this.draw();
@@ -45,12 +47,13 @@ class World {
     }
 
     run() {
-        setInterval(() => {
+        const interval = setInterval(() => {
             if (!this.gameEnded) {
                 this.checkCollisions();
                 this.checkThrowObjects();
             }
         }, 200);
+        this.intervals.push(interval);
     }
 
     /**
@@ -127,20 +130,25 @@ class World {
     }
 
     /**
-     * Обновляет позицию камеры так, чтобы персонаж не исчезал при движении влево,
+     * Обновляет позицию камеры так, чтобы персонаж всегда оставался в центре экрана,
      * и чтобы камера не выходила за границы уровня.
      */
     updateCameraPosition() {
-        let offset = -this.character.x + 100;
-        // Ограничение слева
-        if (this.character.x < 100) {
-            offset = 0;
+        // Центрируем камеру на персонаже
+        let targetOffset = -this.character.x + (this.canvas.width / 2) - (this.character.width / 2);
+        
+        // Ограничение слева - камера не должна уходить за начало уровня
+        if (targetOffset > 0) {
+            targetOffset = 0;
         }
-        // Ограничение справа (если есть level_end_x)
-        if (this.character.x > this.level.level_end_x - this.canvas.width + 100) {
-            offset = -this.level.level_end_x + this.canvas.width - 100;
+        
+        // Ограничение справа - камера не должна уходить за конец уровня
+        let maxOffset = -this.level.level_end_x + this.canvas.width;
+        if (targetOffset < maxOffset) {
+            targetOffset = maxOffset;
         }
-        this.camera_x = offset;
+        
+        this.camera_x = targetOffset;
     }
 
     draw() {
@@ -157,18 +165,22 @@ class World {
         this.ctx.translate(-this.camera_x, 0);
         this.addToMap(this.statusBar);
         this.addToMap(this.coinStatusBar);
+        
+        // Отрисовываем полосу здоровья босса в статической области
+        this.level.enemies.forEach((enemy) => {
+            if (enemy instanceof Endboss && !enemy.isDead) {
+                this.drawBossHealthBar(enemy);
+            }
+        });
 
         // 3. Снова смещаем камеру для динамических объектов
         this.ctx.translate(this.camera_x, 0);
         this.addObjectsToMap(this.level.coins);
         this.addToMap(this.character);
 
-        // 4. Рисуем врагов и (если Endboss) его статус-бар
+        // 4. Рисуем врагов
         this.level.enemies.forEach((enemy) => {
             this.addToMap(enemy);
-            if (enemy instanceof Endboss && enemy.x + enemy.width > -this.camera_x) {
-                enemy.drawStatusBar(this.ctx);
-            }
         });
 
         // 5. Рисуем облака и бросаемые объекты
@@ -207,5 +219,50 @@ class World {
     showGameOverScreen() {
         document.getElementById('gameOverScreen').style.display = 'flex';
         this.gameEnded = true;
+        this.cleanup();
+    }
+
+    showVictoryScreen() {
+        document.getElementById('victoryScreen').style.display = 'flex';
+        this.gameEnded = true;
+        this.cleanup();
+    }
+
+    /**
+     * Отрисовывает полосу здоровья босса в статической области экрана
+     */
+    drawBossHealthBar(boss) {
+        // Проверяем, виден ли босс на экране
+        if (boss.x + boss.width > -this.camera_x && boss.x < -this.camera_x + this.canvas.width) {
+            // Вычисляем позицию полосы здоровья относительно экрана
+            let screenX = boss.x + this.camera_x;
+            let screenY = boss.y - 50; // Поднимаем полосу выше босса
+            
+            // Ограничиваем позицию, чтобы полоса не выходила за границы экрана
+            screenX = Math.max(10, Math.min(screenX, this.canvas.width - 210));
+            screenY = Math.max(10, screenY);
+            
+            // Отрисовываем полосу здоровья
+            const statusImage = new Image();
+            statusImage.src = boss.IMAGES_STATUS[boss.statusBarIndex];
+            this.ctx.drawImage(statusImage, screenX, screenY, 200, 60);
+        }
+    }
+
+    /**
+     * Очищает все интервалы и останавливает анимацию
+     */
+    cleanup() {
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
+        
+        // Останавливаем фоновую музыку
+        if (this.backgroundMusic) {
+            this.backgroundMusic.pause();
+            this.backgroundMusic.currentTime = 0;
+        }
+        
+        // Очищаем массив бутылок
+        this.throwableObjects = [];
     }
 }

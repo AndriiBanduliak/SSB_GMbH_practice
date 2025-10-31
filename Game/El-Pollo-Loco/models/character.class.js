@@ -49,6 +49,7 @@ class Character extends MovableObject {
 
     collectedCoins = 0;
     walking_sound = new Audio('audio/walking.mp3');
+    intervals = []; // Массив для хранения интервалов
 
     constructor() {
         super().loadImage('img/2_character_pepe/2_walk/W-21.png');
@@ -85,9 +86,11 @@ class Character extends MovableObject {
         }
     }
 
-    // Базовый метод движения влево, ограничиваем x >= 0
+    // Базовый метод движения влево с ограничениями
     moveLeft() {
-        this.x = Math.max(0, this.x - this.speed);
+        // Ограничиваем движение, чтобы персонаж не уходил слишком далеко за левую границу
+        let minX = -50; // Позволяем персонажу немного выйти за левую границу
+        this.x = Math.max(minX, this.x - this.speed);
     }
 
     // Базовый метод движения вправо
@@ -97,7 +100,7 @@ class Character extends MovableObject {
 
     animate() {
         // Логика движения (60 кадров/сек)
-        setInterval(() => {
+        const movementInterval = setInterval(() => {
             if (!this.world || !this.world.keyboard) return;
             this.checkCoinCollision();
             this.walking_sound.pause();
@@ -106,7 +109,7 @@ class Character extends MovableObject {
                 this.moveRight();
                 this.otherDirection = false;
                 this.walking_sound.play();
-            } else if (this.world.keyboard.LEFT && this.x > 0) {
+            } else if (this.world.keyboard.LEFT) {
                 this.moveLeft();
                 this.otherDirection = true;
                 this.walking_sound.play();
@@ -115,9 +118,10 @@ class Character extends MovableObject {
             }
             // Убрали логику броска бутылок (D), т.к. она теперь в world.class.js
         }, 1000 / 60);
+        this.intervals.push(movementInterval);
 
         // Смена кадров анимации каждые 150 мс
-        setInterval(() => {
+        const animationInterval = setInterval(() => {
             if (!this.world) return;
             if (this.isHurt()) {
                 this.playAnimation(this.IMAGES_HURT);
@@ -131,5 +135,15 @@ class Character extends MovableObject {
                 this.playAnimation(this.IMAGES_IDLE);
             }
         }, 150);
+        this.intervals.push(animationInterval);
+    }
+
+    /**
+     * Очищает все интервалы персонажа
+     */
+    cleanup() {
+        this.intervals.forEach(interval => clearInterval(interval));
+        this.intervals = [];
+        this.walking_sound.pause();
     }
 }

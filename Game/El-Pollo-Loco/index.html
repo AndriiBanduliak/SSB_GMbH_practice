@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>El Pollo Loco</title>
+  <meta name="description" content="El Pollo Loco - захватывающая игра-платформер с мексиканской тематикой">
+  <meta name="keywords" content="игра, платформер, El Pollo Loco, мексиканская тематика">
+  <title>El Pollo Loco - Мексиканское Приключение</title>
   <link rel="stylesheet" href="./style.css">
   <style>
     @font-face {
@@ -52,6 +54,27 @@
       font-size: 18px;
       font-family: 'retro', sans-serif;
       color: #fff;
+    }
+    
+    /* Стили для инструкций по управлению */
+    #controlsInfo {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 15px;
+      border-radius: 8px;
+      color: #fff;
+      font-family: 'retro', sans-serif;
+      font-size: 14px;
+      z-index: 50;
+    }
+    #controlsInfo h3 {
+      margin: 0 0 10px 0;
+      color: #ffcc00;
+    }
+    #controlsInfo p {
+      margin: 5px 0;
     }
     /* Стили для таблицы лидеров - фиксированная, слева, по центру по вертикали */
     #leaderboardContainer {
@@ -133,8 +156,17 @@
 
   <!-- Регулятор громкости -->
   <div id="volumeControl">
-    <label for="volumeSlider">VOLUME:</label>
+    <label for="volumeSlider">ГРОМКОСТЬ:</label>
     <input type="range" id="volumeSlider" min="0" max="1" step="0.01" value="0.5" />
+  </div>
+
+  <!-- Инструкции по управлению -->
+  <div id="controlsInfo">
+    <h3>УПРАВЛЕНИЕ:</h3>
+    <p>← → - Движение</p>
+    <p>A - Влево, D - Бросок</p>
+    <p>↑ или W - Прыжок</p>
+    <p>ПРОБЕЛ - Прыжок</p>
   </div>
 
   <!-- Таблица лидеров, расположенная слева по центру -->
@@ -145,14 +177,16 @@
 
   <!-- Экран победы -->
   <div id="victoryScreen" class="screen" style="display:none;">
-    <h2>V I N N E R !</h2>
-    <button onclick="restartGame()">NEW GAME</button>
+    <h2>🎉 ПОБЕДА! 🎉</h2>
+    <p>Поздравляем! Вы победили босса!</p>
+    <button onclick="restartGame()">НОВАЯ ИГРА</button>
   </div>
 
   <!-- Экран поражения -->
   <div id="gameOverScreen" class="screen" style="display:none;">
-    <h2>L O S E R ! Shame on YOU!!!</h2>
-    <button onclick="restartGame()">RESTART THE GAME</button>
+    <h2>💀 ПОРАЖЕНИЕ 💀</h2>
+    <p>Не расстраивайтесь! Попробуйте еще раз!</p>
+    <button onclick="restartGame()">ПЕРЕЗАПУСТИТЬ ИГРУ</button>
   </div>
 </body>
 </html>

@@ -36,45 +36,59 @@ class AIInteractionHandlers:
         предлагает пользователю ввести свой вопрос.
         Устанавливает состояние `ASKING_QUESTION`.
         """
-        query = update.callback_query
-        if not query:
-            logger.error("go_to_ask_question called without a callback query.")
-            return BotState.SELECTING_ACTION.value # Вернемся в основное меню
-            
-        await query.answer() # Отвечаем на callback-запрос
-        user = query.from_user
-        
-        # Получаем актуальные лимиты пользователя из БД
-        q_count, _, lang_code = self.db.get_or_create_user(user.id, user.username, user.first_name)
-        context.user_data['lang_code'] = lang_code # Убеждаемся, что lang_code в context.user_data актуален
-
-        log_user_action(user.id, user.username, "go_to_ask_question")
-        
-        # Проверяем, не исчерпан ли дневной лимит
-        if q_count >= Config.DAILY_QUESTION_LIMIT:
-            try:
-                await query.edit_message_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
-            except Exception as e:
-                logger.error(f"Failed to edit message in go_to_ask_question (limit reached): {e}", exc_info=True)
-                await query.message.reply_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
-            return BotState.SELECTING_ACTION.value # Остаемся в главном меню
-        
-        # Отправляем промпт для ввода вопроса
         try:
-            await query.edit_message_text(
-                Translations.get_text(lang_code, 'ask_question_prompt', remaining=Config.DAILY_QUESTION_LIMIT - q_count),
-                reply_markup=get_back_button(lang_code), 
-                parse_mode=ParseMode.HTML
-            )
-        except Exception as e:
-            logger.error(f"Failed to edit message in go_to_ask_question: {e}", exc_info=True)
-            await query.message.reply_text(
-                Translations.get_text(lang_code, 'ask_question_prompt', remaining=Config.DAILY_QUESTION_LIMIT - q_count),
-                reply_markup=get_back_button(lang_code), 
-                parse_mode=ParseMode.HTML
-            )
+            query = update.callback_query
+            if not query:
+                logger.error("go_to_ask_question called without a callback query.")
+                return BotState.SELECTING_ACTION.value # Вернемся в основное меню
+                
+            await query.answer() # Отвечаем на callback-запрос
+            user = query.from_user
+            
+            # Получаем актуальные лимиты пользователя из БД
+            q_count, _, lang_code = self.db.get_or_create_user(user.id, user.username, user.first_name)
+            context.user_data['lang_code'] = lang_code # Убеждаемся, что lang_code в context.user_data актуален
 
-        return BotState.ASKING_QUESTION.value
+            log_user_action(user.id, user.username, "go_to_ask_question")
+            
+            # Проверяем, не исчерпан ли дневной лимит
+            if q_count >= Config.DAILY_QUESTION_LIMIT:
+                try:
+                    await query.edit_message_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
+                except Exception as e:
+                    logger.error(f"Failed to edit message in go_to_ask_question (limit reached): {e}", exc_info=True)
+                    await query.message.reply_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
+                return BotState.SELECTING_ACTION.value # Остаемся в главном меню
+            
+            # Отправляем промпт для ввода вопроса
+            try:
+                await query.edit_message_text(
+                    Translations.get_text(lang_code, 'ask_question_prompt', remaining=Config.DAILY_QUESTION_LIMIT - q_count),
+                    reply_markup=get_back_button(lang_code), 
+                    parse_mode=ParseMode.HTML
+                )
+            except Exception as e:
+                logger.error(f"Failed to edit message in go_to_ask_question: {e}", exc_info=True)
+                await query.message.reply_text(
+                    Translations.get_text(lang_code, 'ask_question_prompt', remaining=Config.DAILY_QUESTION_LIMIT - q_count),
+                    reply_markup=get_back_button(lang_code), 
+                    parse_mode=ParseMode.HTML
+                )
+
+            return BotState.ASKING_QUESTION.value
+            
+        except Exception as e:
+            logger.error(f"Unexpected error in go_to_ask_question: {e}", exc_info=True)
+            # В случае ошибки возвращаемся в главное меню
+            try:
+                if query:
+                    await query.message.reply_text(
+                        Translations.get_text('uk', 'error_generic'),
+                        reply_markup=get_main_keyboard('uk')
+                    )
+            except Exception as reply_error:
+                logger.error(f"Failed to send error message: {reply_error}")
+            return BotState.SELECTING_ACTION.value
 
     async def handle_question_message(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         """
@@ -126,48 +140,62 @@ class AIInteractionHandlers:
         загрузить документ для анализа.
         Устанавливает состояние `ANALYZING_DOC`.
         """
-        query = update.callback_query
-        if not query:
-            logger.error("go_to_analyze_doc called without a callback query.")
-            return BotState.SELECTING_ACTION.value
-            
-        await query.answer()
-        user = query.from_user
-        
-        # Получаем актуальные лимиты пользователя из БД
-        _, d_count, lang_code = self.db.get_or_create_user(user.id, user.username, user.first_name)
-        context.user_data['lang_code'] = lang_code
-
-        log_user_action(user.id, user.username, "go_to_analyze_doc")
-        
-        # Проверяем лимит
-        if d_count >= Config.DAILY_DOCUMENT_LIMIT:
-            try:
-                await query.edit_message_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
-            except Exception as e:
-                logger.error(f"Failed to edit message in go_to_analyze_doc (limit reached): {e}", exc_info=True)
-                await query.message.reply_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
-            return BotState.SELECTING_ACTION.value
-        
-        # Сохраняем тип действия с документом в user_data
-        context.user_data['doc_action'] = 'analyze'
-        
-        # Отправляем промпт для загрузки документа
         try:
-            await query.edit_message_text(
-                Translations.get_text(lang_code, 'analyze_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
-                reply_markup=get_back_button(lang_code), 
-                parse_mode=ParseMode.HTML
-            )
+            query = update.callback_query
+            if not query:
+                logger.error("go_to_analyze_doc called without a callback query.")
+                return BotState.SELECTING_ACTION.value
+                
+            await query.answer()
+            user = query.from_user
+            
+            # Получаем актуальные лимиты пользователя из БД
+            _, d_count, lang_code = self.db.get_or_create_user(user.id, user.username, user.first_name)
+            context.user_data['lang_code'] = lang_code
+
+            log_user_action(user.id, user.username, "go_to_analyze_doc")
+            
+            # Проверяем лимит
+            if d_count >= Config.DAILY_DOCUMENT_LIMIT:
+                try:
+                    await query.edit_message_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
+                except Exception as e:
+                    logger.error(f"Failed to edit message in go_to_analyze_doc (limit reached): {e}", exc_info=True)
+                    await query.message.reply_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
+                return BotState.SELECTING_ACTION.value
+            
+            # Сохраняем тип действия с документом в user_data
+            context.user_data['doc_action'] = 'analyze'
+            
+            # Отправляем промпт для загрузки документа
+            try:
+                await query.edit_message_text(
+                    Translations.get_text(lang_code, 'analyze_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
+                    reply_markup=get_back_button(lang_code), 
+                    parse_mode=ParseMode.HTML
+                )
+            except Exception as e:
+                logger.error(f"Failed to edit message in go_to_analyze_doc: {e}", exc_info=True)
+                await query.message.reply_text(
+                    Translations.get_text(lang_code, 'analyze_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
+                    reply_markup=get_back_button(lang_code), 
+                    parse_mode=ParseMode.HTML
+                )
+            
+            return BotState.ANALYZING_DOC.value
+            
         except Exception as e:
-            logger.error(f"Failed to edit message in go_to_analyze_doc: {e}", exc_info=True)
-            await query.message.reply_text(
-                Translations.get_text(lang_code, 'analyze_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
-                reply_markup=get_back_button(lang_code), 
-                parse_mode=ParseMode.HTML
-            )
-        
-        return BotState.ANALYZING_DOC.value
+            logger.error(f"Unexpected error in go_to_analyze_doc: {e}", exc_info=True)
+            # В случае ошибки возвращаемся в главное меню
+            try:
+                if query:
+                    await query.message.reply_text(
+                        Translations.get_text('uk', 'error_generic'),
+                        reply_markup=get_main_keyboard('uk')
+                    )
+            except Exception as reply_error:
+                logger.error(f"Failed to send error message: {reply_error}")
+            return BotState.SELECTING_ACTION.value
 
     async def go_to_edit_doc(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int:
         """
@@ -175,48 +203,62 @@ class AIInteractionHandlers:
         Аналогично анализу, но для редактирования.
         Устанавливает состояние `EDITING_DOC`.
         """
-        query = update.callback_query
-        if not query:
-            logger.error("go_to_edit_doc called without a callback query.")
-            return BotState.SELECTING_ACTION.value
-
-        await query.answer()
-        user = query.from_user
-        
-        # Получаем актуальные лимиты пользователя из БД
-        _, d_count, lang_code = self.db.get_or_create_user(user.id, user.username, user.first_name)
-        context.user_data['lang_code'] = lang_code
-
-        log_user_action(user.id, user.username, "go_to_edit_doc")
-        
-        # Проверяем лимит
-        if d_count >= Config.DAILY_DOCUMENT_LIMIT:
-            try:
-                await query.edit_message_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
-            except Exception as e:
-                logger.error(f"Failed to edit message in go_to_edit_doc (limit reached): {e}", exc_info=True)
-                await query.message.reply_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
-            return BotState.SELECTING_ACTION.value
-        
-        # Сохраняем тип действия с документом
-        context.user_data['doc_action'] = 'edit'
-        
-        # Отправляем промпт для загрузки документа с инструкцией по подписи
         try:
-            await query.edit_message_text(
-                Translations.get_text(lang_code, 'edit_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
-                reply_markup=get_back_button(lang_code), 
-                parse_mode=ParseMode.HTML
-            )
+            query = update.callback_query
+            if not query:
+                logger.error("go_to_edit_doc called without a callback query.")
+                return BotState.SELECTING_ACTION.value
+
+            await query.answer()
+            user = query.from_user
+            
+            # Получаем актуальные лимиты пользователя из БД
+            _, d_count, lang_code = self.db.get_or_create_user(user.id, user.username, user.first_name)
+            context.user_data['lang_code'] = lang_code
+
+            log_user_action(user.id, user.username, "go_to_edit_doc")
+            
+            # Проверяем лимит
+            if d_count >= Config.DAILY_DOCUMENT_LIMIT:
+                try:
+                    await query.edit_message_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
+                except Exception as e:
+                    logger.error(f"Failed to edit message in go_to_edit_doc (limit reached): {e}", exc_info=True)
+                    await query.message.reply_text(Translations.get_text(lang_code, 'limit_reached'), reply_markup=get_back_button(lang_code))
+                return BotState.SELECTING_ACTION.value
+            
+            # Сохраняем тип действия с документом
+            context.user_data['doc_action'] = 'edit'
+            
+            # Отправляем промпт для загрузки документа с инструкцией по подписи
+            try:
+                await query.edit_message_text(
+                    Translations.get_text(lang_code, 'edit_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
+                    reply_markup=get_back_button(lang_code), 
+                    parse_mode=ParseMode.HTML
+                )
+            except Exception as e:
+                logger.error(f"Failed to edit message in go_to_edit_doc: {e}", exc_info=True)
+                await query.message.reply_text(
+                    Translations.get_text(lang_code, 'edit_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
+                    reply_markup=get_back_button(lang_code), 
+                    parse_mode=ParseMode.HTML
+                )
+            
+            return BotState.EDITING_DOC.value
+            
         except Exception as e:
-            logger.error(f"Failed to edit message in go_to_edit_doc: {e}", exc_info=True)
-            await query.message.reply_text(
-                Translations.get_text(lang_code, 'edit_doc_prompt', remaining=Config.DAILY_DOCUMENT_LIMIT - d_count),
-                reply_markup=get_back_button(lang_code), 
-                parse_mode=ParseMode.HTML
-            )
-        
-        return BotState.EDITING_DOC.value
+            logger.error(f"Unexpected error in go_to_edit_doc: {e}", exc_info=True)
+            # В случае ошибки возвращаемся в главное меню
+            try:
+                if query:
+                    await query.message.reply_text(
+                        Translations.get_text('uk', 'error_generic'),
+                        reply_markup=get_main_keyboard('uk')
+                    )
+            except Exception as reply_error:
+                logger.error(f"Failed to send error message: {reply_error}")
+            return BotState.SELECTING_ACTION.value
 
     async def handle_document(self, update: Update, context: ContextTypes.DEFAULT_TYPE) -> int | None:
         """

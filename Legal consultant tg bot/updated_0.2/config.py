@@ -109,7 +109,7 @@ class Translations:
         'uk': {
             # --- ОБЩИЕ ТЕКСТЫ ---
             "welcome_choose_lang": "👋 Вітаю! Будь ласка, оберіть мову:",
-            "welcome": "🏛️ <b>Вітаю! Я — ваш персональний AI Юрист.</b>\n\nГотовий допомогти вам розібратися в правових нюансах, проаналізувати документи та сформулювати професійні запити.\n\n<b>Мої можливості:</b>\n• Відповіді на юридичні питання\n• Аналіз та редагування документів\n• Формування адвокатських запитів\n• Генерація договору\n\n⚠️ <b>Важливо:</b> Мої відповіді мають інформаційний характер. Для прийняття важливих рішень звертайтесь до кваліфікованих юристів.\n\nОберіть дію:",
+            "welcome": "🏛️ <b>Вітаю! Я — консультант Бандуль, ваш персональний AI Юрист.</b>\n\nГотовий допомогти вам розібратися в правових нюансах, проаналізувати документи та сформулювати професійні запити.\n\n<b>Мої можливості:</b>\n• Відповіді на юридичні питання\n• Аналіз та редагування документів\n• Формування адвокатських запитів\n• Генерація договору\n\n⚠️ <b>Важливо:</b> Мої відповіді мають інформаційний характер. Для прийняття важливих рішень звертайтесь до кваліфікованих юристів.\n\nОберіть дію:",
             "main_menu": "🏛️ <b>AI Юрист</b>\n\nОберіть дію:",
             "prompt_use_buttons": "Будь ласка, використовуйте кнопки нижче, щоб обрати дію.",
             "back_btn": "◀️ Назад", "cancel_btn": "❌ Скасувати", "info_btn": "ℹ️ Інформація", "confirm_btn": "✅ Підтвердити", "edit_btn": "✏️ Редагувати",
@@ -271,7 +271,7 @@ class Translations:
         'en': {
             # --- General texts ---
             "welcome_choose_lang": "👋 Hello! Please choose your language:",
-            "welcome": "🏛️ <b>Welcome! I am your personal AI Lawyer.</b>\n\nReady to help you understand legal nuances, analyze documents, draft professional requests, and generate contracts.\n\n<b>My capabilities:</b>\n• Answers to legal questions\n• Document analysis and editing\n• Drafting formal requests\n• Contract generation\n\n⚠️ <b>Important:</b> My answers are for informational purposes only. For critical decisions, please consult a qualified lawyer.\n\nChoose an action:",
+            "welcome": "🏛️ <b>Welcome! I am Bandul Consultant, your personal AI Lawyer.</b>\n\nReady to help you understand legal nuances, analyze documents, draft professional requests, and generate contracts.\n\n<b>My capabilities:</b>\n• Answers to legal questions\n• Document analysis and editing\n• Drafting formal requests\n• Contract generation\n\n⚠️ <b>Important:</b> My answers are for informational purposes only. For critical decisions, please consult a qualified lawyer.\n\nChoose an action:",
             "main_menu": "🏛️ <b>AI Lawyer</b>\n\nChoose an action:",
             "prompt_use_buttons": "Please use the buttons below to select an action.",
             "back_btn": "◀️ Back", "cancel_btn": "❌ Cancel", "info_btn": "ℹ️ Info", "confirm_btn": "✅ Confirm", "edit_btn": "✏️ Edit",
@@ -431,7 +431,7 @@ At the end, add a list of appendices, indicate the current date, and leave space
         'de': {
             # --- General texts ---
             "welcome_choose_lang": "👋 Hallo! Bitte wählen Sie Ihre Sprache:",
-            "welcome": "🏛️ <b>Willkommen! Ich bin Ihr persönlicher KI-Anwalt.</b>\n\nBereit, Ihnen zu helfen, rechtliche Nuancen zu verstehen, Dokumente zu analysieren, professionelle Anfragen zu formulieren und Verträge zu erstellen.\n\n<b>Meine Fähigkeiten:</b>\n• Antworten auf rechtliche Fragen\n• Dokumentenanalyse und -bearbeitung\n• Erstellung von formellen Anfragen\n• Vertragserstellung\n\n⚠️ <b>Wichtig:</b> Meine Antworten dienen nur zu Informationszwecken. Für wichtige Entscheidungen wenden Sie sich bitte an einen qualifizierten Anwalt.\n\nWählen Sie eine Aktion:",
+            "welcome": "🏛️ <b>Willkommen! Ich bin Bandul Berater, Ihr persönlicher KI-Anwalt.</b>\n\nBereit, Ihnen zu helfen, rechtliche Nuancen zu verstehen, Dokumente zu analysieren, professionelle Anfragen zu formulieren und Verträge zu erstellen.\n\n<b>Meine Fähigkeiten:</b>\n• Antworten auf rechtliche Fragen\n• Dokumentenanalyse und -bearbeitung\n• Erstellung von formellen Anfragen\n• Vertragserstellung\n\n⚠️ <b>Wichtig:</b> Meine Antworten dienen nur zu Informationszwecken. Für wichtige Entscheidungen wenden Sie sich bitte an einen qualifizierten Anwalt.\n\nWählen Sie eine Aktion:",
             "main_menu": "🏛️ <b>KI-Anwalt</b>\n\nWählen Sie eine Aktion:",
             "prompt_use_buttons": "Bitte verwenden Sie die Schaltflächen unten, um eine Aktion auszuwählen.",
             "back_btn": "◀️ Zurück", "cancel_btn": "❌ Abbrechen", "info_btn": "ℹ️ Information", "confirm_btn": "✅ Bestätigen", "edit_btn": "✏️ Bearbeiten",
