@@ -89,8 +89,8 @@ Falls Sie die Schritte manuell durchführen möchten:
 ### 1. Repository klonen
 
 ```powershell
-git clone <repository-url>
-cd cryptocrm
+git clone https://github.com/AndriiBanduliak/SSB_GMbH_practice/tree/main/crm-crypto
+cd crm-crypto
 ```
 
 ### 2. PostgreSQL-Datenbank erstellen
