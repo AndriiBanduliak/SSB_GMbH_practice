@@ -1,0 +1,21 @@
+# Environments
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+
+# Env & local settings
+.env
+server_settings.json
+
+# Logs
+*.log
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+

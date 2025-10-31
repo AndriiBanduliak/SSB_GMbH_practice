@@ -1,3 +1,4 @@
-discord.py
-tweepy
-dotenv
+discord.py==2.5.2
+tweepy==4.15.0
+python-dotenv==1.0.1
+aiohttp==3.11.15
